@@ -10,6 +10,7 @@
 /// Don't forget the endif at the bottom
 /// </summary>
 #include <SFML/Graphics.hpp>
+#include <iostream>
 
 class Game
 {
@@ -31,6 +32,8 @@ private:
 	
 	void setupFontAndText();
 	void setupSprite();
+	void setupRectangle();
+	bool checkForOverlap();
 
 	sf::RenderWindow m_window; // main SFML window
 	sf::Font m_ArialBlackfont; // font used by message

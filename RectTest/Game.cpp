@@ -22,6 +22,7 @@ Game::Game() :
 {
 	setupFontAndText(); // load font 
 	setupSprite(); // load texture
+	setupRectangle(); // setup the rectangle
 }
 
 /// <summary>
@@ -77,6 +78,10 @@ void Game::processEvents()
 		{
 			processKeys(newEvent);
 		}
+		if (sf::Event::MouseButtonPressed == newEvent.type)
+		{
+			processMouseDown(newEvent);
+		}
 	}
 }
 
@@ -91,6 +96,48 @@ void Game::processKeys(sf::Event t_event)
 	{
 		m_exitGame = true;
 	}
+	if (sf::Keyboard::Up == t_event.key.code)
+	{
+		m_logoSprite.move(0.0f, -2.0f);
+	}
+	if (sf::Keyboard::Down == t_event.key.code)
+	{
+		m_logoSprite.move(0.0f, 2.0f);
+	}
+	if (sf::Keyboard::Left == t_event.key.code)
+	{
+		m_logoSprite.move(-2.0f, 0.0f);
+	}
+	if (sf::Keyboard::Right == t_event.key.code)
+	{
+		m_logoSprite.move(2.0f, 0.0f);
+	}
+	
+	if (checkForOverlap())
+	{
+		m_logoSprite.setColor(sf::Color::Green);
+	}
+	else
+	{
+		m_logoSprite.setColor(sf::Color::White);
+	}
+}
+
+void Game::processMouseDown(sf::Event t_event)
+{
+	sf::Vector2i mouseLocation;
+	mouseLocation.x = t_event.mouseButton.x;
+	mouseLocation.y = t_event.mouseButton.y;
+
+	if (m_TestTarget.contains(mouseLocation))
+	{
+		m_welcomeMessage.setFillColor(sf::Color::Cyan);
+	}
+	else
+	{
+		m_welcomeMessage.setFillColor(sf::Color::Yellow);
+	}
+	std::cout << mouseLocation.x << "," << mouseLocation.y << std::endl;
 }
 
 /// <summary>
@@ -126,13 +173,13 @@ void Game::setupFontAndText()
 		std::cout << "problem loading arial black font" << std::endl;
 	}
 	m_welcomeMessage.setFont(m_ArialBlackfont);
-	m_welcomeMessage.setString("SFML Game");
+	m_welcomeMessage.setString("Target is at 100,100 and 100 in size");
 	m_welcomeMessage.setStyle(sf::Text::Underlined | sf::Text::Italic | sf::Text::Bold);
 	m_welcomeMessage.setPosition(40.0f, 40.0f);
-	m_welcomeMessage.setCharacterSize(80U);
+	m_welcomeMessage.setCharacterSize(30U);
 	m_welcomeMessage.setOutlineColor(sf::Color::Red);
 	m_welcomeMessage.setFillColor(sf::Color::Black);
-	m_welcomeMessage.setOutlineThickness(3.0f);
+	m_welcomeMessage.setOutlineThickness(1.0f);
 
 }
 
@@ -148,4 +195,30 @@ void Game::setupSprite()
 	}
 	m_logoSprite.setTexture(m_logoTexture);
 	m_logoSprite.setPosition(300.0f, 180.0f);
+}
+
+
+// set target
+void Game::setupRectangle()
+{
+	m_TestTarget.top = 100;
+	m_TestTarget.left = 100;
+	m_TestTarget.height = 100;
+	m_TestTarget.width = 100;
+}
+
+bool Game::checkForOverlap()
+{
+	bool result = false;
+	sf::FloatRect areaOfSprite = m_logoSprite.getGlobalBounds();
+	sf::FloatRect testTarget;
+	testTarget.top = static_cast<float>(m_TestTarget.top);
+	testTarget.left = static_cast<float>(m_TestTarget.left);
+	testTarget.height = static_cast<float>(m_TestTarget.height);
+	testTarget.width = static_cast<float>(m_TestTarget.width);
+	if (areaOfSprite.intersects(testTarget))
+	{
+		result = true;
+	}
+	return result;
 }
